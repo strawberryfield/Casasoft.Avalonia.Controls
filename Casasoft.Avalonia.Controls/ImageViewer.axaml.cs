@@ -28,7 +28,7 @@ using System.IO;
 namespace Casasoft.Avalonia.Controls;
 
 /// <summary>
-/// A lightweight Avalonia control that displays an <see cref="ImageMagick.MagickImage"/> as an Avalonia <see cref="Bitmap"/>.
+/// A lightweight Avalonia control that displays an <see cref="ImageMagick.MagickImage"/> as an Avalonia <see cref="Avalonia.Media.Imaging.Bitmap"/>.
 /// </summary>
 /// <remarks>
 /// This control replaces the previous WPF implementation that relied on
@@ -95,7 +95,7 @@ public partial class ImageViewer : UserControl
     /// <remarks>
     /// This override listens for changes to the <see cref="SourceProperty"/> and sets the
     /// internal <c>img.Source</c> accordingly. The <c>img</c> element is expected to be present
-    /// in the control's XAML (typically an <see cref="Avalonia.Controls.Image"/> named <c>img</c>).
+    /// in the control's XAML (typically an <see cref="global::Avalonia.Controls.Image"/> named <c>img</c>).
     /// </remarks>
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
