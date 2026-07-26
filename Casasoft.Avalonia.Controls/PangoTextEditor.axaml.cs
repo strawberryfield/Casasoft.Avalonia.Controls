@@ -31,17 +31,31 @@ namespace Casasoft.Avalonia.Controls;
 /// </summary>
 public partial class PangoTextEditor : UserControl
 {
+    /// <summary>
+    /// Defines the <see cref="Value"/> styled property.
+    /// </summary>
     public static readonly StyledProperty<string> ValueProperty =
         AvaloniaProperty.Register<PangoTextEditor, string>(nameof(Value), string.Empty);
 
+    /// <summary>
+    /// Gets or sets the text content of the editor, storing Pango-markup formatted text.
+    /// </summary>
+    /// <value>The current text value. Defaults to an empty string.</value>
     public string Value
     {
         get => GetValue(ValueProperty);
         set => SetValue(ValueProperty, value);
     }
 
+    /// <summary>
+    /// Flag to prevent recursive synchronization between the text control and the <see cref="Value"/> property.
+    /// </summary>
     private bool _suppressTextSync;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PangoTextEditor"/> class.
+    /// Sets up the component and configures the text change event handler to synchronize with the <see cref="Value"/> property.
+    /// </summary>
     public PangoTextEditor()
     {
         InitializeComponent();
@@ -53,6 +67,14 @@ public partial class PangoTextEditor : UserControl
         };
     }
 
+    /// <summary>
+    /// Handles property changes, specifically synchronizing the underlying text control when the <see cref="Value"/> property changes.
+    /// </summary>
+    /// <param name="change">The property change event arguments containing information about the changed property.</param>
+    /// <remarks>
+    /// This method prevents infinite recursion by using the <see cref="_suppressTextSync"/> flag
+    /// to suppress the text change event handler during programmatic updates.
+    /// </remarks>
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);

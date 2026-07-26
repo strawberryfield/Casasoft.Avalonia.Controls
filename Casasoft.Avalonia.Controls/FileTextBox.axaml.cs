@@ -40,6 +40,17 @@ namespace Casasoft.Avalonia.Controls;
 /// <c>"Image files (*.jpg;*.jpeg;*.png;*.psd)|*.jpg;*.jpeg;*.png;*.psd|All files (*.*)|*.*"</c>),
 /// so those attribute values can be copied verbatim into the ported .axaml files.
 /// </remarks>
+/// <summary>
+/// A small composite control that combines a text box and a "Browse" button to select files.
+/// 
+/// Behavior:
+/// - The <see cref="Value"/> property holds the currently selected file path or filename.
+/// - Typing into the internal text box updates <see cref="Value"/> (two-way binding semantics).
+/// - Clicking "Browse" opens the platform file picker and, on selection, updates <see cref="Value"/>.
+/// 
+/// The control uses Avalonia's <see cref="IStorageProvider"/> obtained from the current top-level
+/// to show the file picker, and converts WPF-style filter strings via <see cref="ParseWpfFilter(string?)"/>.
+/// </summary>
 public partial class FileTextBox : UserControl
 {
     /// <summary>
@@ -184,9 +195,11 @@ public partial class FileTextBox : UserControl
     /// and file patterns. Returns an empty list when <paramref name="filter"/> is null or whitespace.
     /// </returns>
     /// <remarks>
-    /// The method splits the input filter string by pipe delimiters (|), processing pairs of 
-    /// description and file patterns. Each pattern pair is separated by semicolons. Invalid or 
-    /// incomplete filter strings are handled gracefully by returning an empty list.
+    /// The method expects the filter string to be composed of pairs: a human-readable description
+    /// followed by a semicolon-separated list of wildcard patterns. The string is split by '|'
+    /// into parts; each adjacent pair (parts[i], parts[i+1]) becomes one <see cref="FilePickerFileType"/>.
+    /// Patterns are split on ';' and empty entries are ignored. Malformed or incomplete pairs are
+    /// ignored, and the method returns an empty list for null/whitespace input.
     /// </remarks>
     internal static List<FilePickerFileType> ParseWpfFilter(string? filter)
     {

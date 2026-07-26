@@ -30,26 +30,57 @@ namespace Casasoft.Avalonia.Controls;
 /// DPI, box thickness and padding. Internally wraps Avalonia's own (decimal-based)
 /// <see cref="Avalonia.Controls.NumericUpDown"/>.
 /// </summary>
+/// <summary>
+/// A user control that wraps an Avalonia numeric up/down control and exposes
+/// bindable styled properties for the current <see cref="Value"/> and the
+/// <see cref="MinValue"/> allowed. Synchronizes changes between the internal
+/// numeric control (`nud`) and the styled properties to keep UI and view-model
+/// state consistent.
+/// </summary>
 public partial class NumericUpDown : UserControl
 {
+    /// <summary>
+    /// The styled backing property for <see cref="Value"/>.
+    /// Default value is <c>0</c>.
+    /// </summary>
     public static readonly StyledProperty<int> ValueProperty =
         AvaloniaProperty.Register<NumericUpDown, int>(nameof(Value), 0);
 
+    /// <summary>
+    /// Gets or sets the current integer value of the control.
+    /// Setting this property updates the styled property store and will notify
+    /// any bindings. Changes to the internal numeric control are propagated to
+    /// this property via the <see cref="nud"/> ValueChanged handler.
+    /// </summary>
     public int Value
     {
         get => GetValue(ValueProperty);
         set => SetValue(ValueProperty, value);
     }
 
+    /// <summary>
+    /// The styled backing property for <see cref="MinValue"/>.
+    /// Default value is <c>0</c>.
+    /// </summary>
     public static readonly StyledProperty<int> MinValueProperty =
         AvaloniaProperty.Register<NumericUpDown, int>(nameof(MinValue), 0);
 
+    /// <summary>
+    /// Gets or sets the minimum allowed value for the control.
+    /// This value is propagated to the internal numeric control's <c>Minimum</c>.
+    /// </summary>
     public int MinValue
     {
         get => GetValue(MinValueProperty);
         set => SetValue(MinValueProperty, value);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NumericUpDown"/> control.
+    /// Calls <see cref="InitializeComponent"/> and hooks the internal numeric
+    /// control's ValueChanged event to keep the styled <see cref="Value"/>
+    /// property in sync when the user changes the value through the UI.
+    /// </summary>
     public NumericUpDown()
     {
         InitializeComponent();
@@ -61,6 +92,13 @@ public partial class NumericUpDown : UserControl
         };
     }
 
+    /// <summary>
+    /// Called when any Avalonia styled property on this control changes.
+    /// Synchronizes changes of <see cref="Value"/> and <see cref="MinValue"/>
+    /// to the internal numeric control (<c>nud</c>), ensuring the visual
+    /// state matches the property values.
+    /// </summary>
+    /// <param name="change">Information about the property change.</param>
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
