@@ -183,6 +183,11 @@ public partial class FileTextBox : UserControl
     /// A list of <see cref="FilePickerFileType"/> instances reflecting the parsed descriptions
     /// and file patterns. Returns an empty list when <paramref name="filter"/> is null or whitespace.
     /// </returns>
+    /// <remarks>
+    /// The method splits the input filter string by pipe delimiters (|), processing pairs of 
+    /// description and file patterns. Each pattern pair is separated by semicolons. Invalid or 
+    /// incomplete filter strings are handled gracefully by returning an empty list.
+    /// </remarks>
     internal static List<FilePickerFileType> ParseWpfFilter(string? filter)
     {
         List<FilePickerFileType> list = new();

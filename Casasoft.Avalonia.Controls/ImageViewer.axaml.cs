@@ -28,32 +28,46 @@ using System.IO;
 namespace Casasoft.Avalonia.Controls;
 
 /// <summary>
-/// Displays a <see cref="MagickImage"/> preview. Replacement for the WPF
-/// <c>Casasoft.Xaml.Controls.ImageViewer</c>, which relied on
-/// <c>Magick.NET.SystemWindowsMedia</c>'s <c>MagickImage.ToBitmapSource()</c>
-/// extension. Avalonia has no equivalent extension, so <see cref="SetImage"/>
-/// converts through an in-memory PNG stream instead.
+/// A lightweight Avalonia control that displays an <see cref="ImageMagick.MagickImage"/> as an Avalonia <see cref="Bitmap"/>.
 /// </summary>
 /// <remarks>
-/// Call sites that previously did <c>image.Source = bm.ToBitmapSource();</c>
-/// become <c>image.SetImage(bm);</c> after porting.
+/// This control replaces the previous WPF implementation that relied on
+/// <c>Magick.NET.SystemWindowsMedia</c>'s <c>MagickImage.ToBitmapSource()</c> extension.
+/// Because Avalonia does not provide that extension, <see cref="SetImage"/> performs an
+/// in-memory PNG round-trip: the <see cref="MagickImage"/> is written to a <see cref="MemoryStream"/>
+/// in PNG format and then loaded into an Avalonia <see cref="Bitmap"/> for display.
+///
+/// Typical usage:
+/// <code>
+/// // convert a MagickImage and show it
+/// var magick = new MagickImage("photo.jpg");
+/// imageViewer.SetImage(magick);
+///
+/// // clear the viewer
+/// imageViewer.Clear();
+/// </code>
+///
+/// The control expects a child image element in the corresponding XAML with the name <c>img</c>.
 /// </remarks>
 public partial class ImageViewer : UserControl
 {
+    /// <summary>
+    /// Backing styled property for <see cref="Source"/>.
+    /// </summary>
     public static readonly StyledProperty<Bitmap?> SourceProperty =
         AvaloniaProperty.Register<ImageViewer, Bitmap?>(nameof(Source));
 
     /// <summary>
-    /// Gets or sets the currently displayed bitmap in the image viewer.
+    /// Gets or sets the currently displayed bitmap.
     /// </summary>
     /// <remarks>
-    /// This property is backed by the <see cref="SourceProperty"/> styled property, which allows
-    /// it to be used as a bindable property in XAML markup. When set to <c>null</c>, the viewer
-    /// displays as empty without any image content.
+    /// This property is a styled property so it can be bound to in XAML.
+    /// Setting this property to <c>null</c> clears the displayed image.
+    /// When the property changes internally the control updates the visual image element
+    /// (the internal element named <c>img</c> declared in the control's XAML).
     /// </remarks>
     /// <value>
-    /// A <see cref="Bitmap"/> object representing the image to display, or <c>null</c> if no image
-    /// is currently displayed in the viewer.
+    /// A <see cref="Bitmap"/> instance to display, or <c>null</c> if no image is shown.
     /// </value>
     public Bitmap? Source
     {
@@ -65,16 +79,24 @@ public partial class ImageViewer : UserControl
     /// Initializes a new instance of the <see cref="ImageViewer"/> control.
     /// </summary>
     /// <remarks>
-    /// Calls <see cref="InitializeComponent"/> to load the control's XAML, create and
-    /// wire up child controls (for example the internal <c>img</c> element) and apply styles.
-    /// After construction the control is ready for use and its <see cref="Source"/> property
-    /// may be set (or <see cref="SetImage"/> called) to display image content.
+    /// Calls <see cref="InitializeComponent"/> to load the control's XAML, create and wire up child controls,
+    /// and apply styles. After construction the <see cref="Source"/> property may be set or
+    /// <see cref="SetImage(MagickImage?)"/> may be called to present image content.
     /// </remarks>
     public ImageViewer()
     {
         InitializeComponent();
     }
 
+    /// <summary>
+    /// Monitors property changes and forwards <see cref="Source"/> updates to the visual image element.
+    /// </summary>
+    /// <param name="change">Details about the changed property.</param>
+    /// <remarks>
+    /// This override listens for changes to the <see cref="SourceProperty"/> and sets the
+    /// internal <c>img.Source</c> accordingly. The <c>img</c> element is expected to be present
+    /// in the control's XAML (typically an <see cref="Avalonia.Controls.Image"/> named <c>img</c>).
+    /// </remarks>
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
@@ -86,10 +108,19 @@ public partial class ImageViewer : UserControl
     }
 
     /// <summary>
-    /// Converts <paramref name="image"/> to an Avalonia <see cref="Bitmap"/> (via an
-    /// in-memory PNG round-trip) and displays it. Pass <c>null</c> to clear the viewer.
+    /// Converts a <see cref="MagickImage"/> into an Avalonia <see cref="Bitmap"/> and displays it.
     /// </summary>
-    /// <param name="image">Source image, or null to clear the display.</param>
+    /// <param name="image">
+    /// The source <see cref="MagickImage"/> to display. Pass <c>null</c> to clear the viewer.
+    /// </param>
+    /// <remarks>
+    /// The conversion is performed by writing the <paramref name="image"/> to an in-memory PNG stream
+    /// and creating an Avalonia <see cref="Bitmap"/> from that stream. The method disposes the temporary
+    /// stream before returning; <see cref="Bitmap"/> already reads the required data during construction.
+    ///
+    /// This method performs work on the calling thread; if called from a non-UI thread the caller must
+    /// ensure thread affinity where required by Avalonia or marshal back to the UI thread before calling.
+    /// </remarks>
     public void SetImage(MagickImage? image)
     {
         if (image is null)
@@ -105,7 +136,7 @@ public partial class ImageViewer : UserControl
     }
 
     /// <summary>
-    /// Clears the currently displayed image.
+    /// Clears any image currently displayed by the control.
     /// </summary>
     public void Clear() => Source = null;
 }
