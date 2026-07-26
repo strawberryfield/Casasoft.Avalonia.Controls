@@ -1,6 +1,8 @@
 <Solution>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
+    <File Path="LICENSE.txt" />
+    <File Path="README.md" />
   </Folder>
   <Project Path="Casasoft.Avalonia.Controls/Casasoft.Avalonia.Controls.csproj" />
 </Solution>
