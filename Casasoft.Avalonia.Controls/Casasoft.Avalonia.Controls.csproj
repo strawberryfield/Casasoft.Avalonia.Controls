@@ -42,8 +42,8 @@
     AVLN2002 "Duplicate x:Class directive" for every control.
   -->
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.2.5" />
-    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.14.0" />
+    <PackageReference Include="Avalonia" Version="12.1.0" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.15.0" />
   </ItemGroup>
 
   <ItemGroup>
