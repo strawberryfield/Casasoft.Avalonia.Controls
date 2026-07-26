@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Casasoft.Avalonia.Controls</AssemblyName>
+    <RootNamespace>Casasoft.Avalonia.Controls</RootNamespace>
+    <Authors>Roberto Ceccarelli - Casasoft</Authors>
+    <Product>Casasoft Contemporary Carte de Visite Tools</Product>
+    <Description>AvaloniaUI porting of the custom controls used by the WPF-only Casasoft.Xaml.Controls package: FileTextBox, FileTextBoxLabel, NumericUpDown, ImageViewer, PangoTextEditor.</Description>
+    <Copyright>copyright (c) 2020-2026 Roberto Ceccarelli - Casasoft</Copyright>
+    <RepositoryUrl>https://github.com/strawberryfield/Contemporary_CDV/</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://strawberryfield.altervista.org/carte_de_visite/index.php</PackageProjectUrl>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>C:\projects\Contemporary_CDV\bin\GUI-Avalonia\build\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>C:\projects\Contemporary_CDV\bin\GUI-Avalonia\build\</OutputPath>
+  </PropertyGroup>
+
+  <!--
+    This library is intentionally decoupled from Common.csproj / the CCDV domain
+    logic: it only knows about generic file/text/number/image editing, plus the
+    Magick.NET <-> Avalonia.Bitmap conversion needed by ImageViewer. Domain-specific
+    controls (ColorPickerLabelControl, FontSelectorControl, GravityControl,
+    CommonOptionsControl, CommonCommandsControl, ...) stay in CCDV.Avalonia, exactly
+    like their WPF counterparts stay in CCDV/Controls today.
+
+    NOTE: do NOT add an explicit "<AvaloniaResource Include="**\*.axaml" />" item
+    group here. The Avalonia NuGet package's own MSBuild targets already glob and
+    include every *.axaml file as AvaloniaResource automatically; adding the same
+    glob explicitly makes each file get processed twice and the compiler reports
+    AVLN2002 "Duplicate x:Class directive" for every control.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.2.5" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.14.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

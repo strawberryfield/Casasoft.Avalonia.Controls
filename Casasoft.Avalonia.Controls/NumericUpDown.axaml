@@ -1,0 +1,45 @@
+<!--
+copyright (c) 2020-2026 Roberto Ceccarelli - Casasoft
+http://strawberryfield.altervista.org
+
+This file is part of Casasoft Contemporary Carte de Visite Tools
+https://github.com/strawberryfield/Contemporary_CDV
+
+Casasoft CCDV Tools is free software:
+you can redistribute it and/or modify it
+under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Casasoft CCDV Tools is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU AGPL v.3
+along with Casasoft CCDV Tools.
+If not, see <http://www.gnu.org/licenses/>.
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="using:Avalonia.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Casasoft.Avalonia.Controls.NumericUpDown">
+    <!--
+      Avalonia ships a native NumericUpDown control (decimal-based) as part of
+      Avalonia.Controls itself since 11.0, so this wrapper only needs to adapt its
+      int-based Value/MinValue API to keep the WPF XAML attributes
+      (Value="3" MinValue="1") reusable as-is. The "controls:" prefix (rather than
+      the unqualified default-namespace name) avoids any ambiguity with this very
+      class, which shares the same simple name "NumericUpDown".
+      A ContextMenu (used in WPF for the DPI presets 72/150/300/600) can be attached
+      directly to this control from consuming XAML, since ContextMenu is an ordinary
+      inherited Control property - no extra passthrough property is needed.
+    -->
+    <controls:NumericUpDown x:Name="nud"
+                             Increment="1"
+                             FormatString="0"
+                             ShowButtonSpinner="True" />
+</UserControl>
